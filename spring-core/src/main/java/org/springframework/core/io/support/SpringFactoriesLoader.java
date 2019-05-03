@@ -103,6 +103,7 @@ public final class SpringFactoriesLoader {
 		for (String factoryName : factoryNames) {
 			result.add(instantiateFactory(factoryName, factoryClass, classLoaderToUse));
 		}
+//		排序
 		AnnotationAwareOrderComparator.sort(result);
 		return result;
 	}
