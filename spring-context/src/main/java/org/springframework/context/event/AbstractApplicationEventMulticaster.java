@@ -174,9 +174,11 @@ public abstract class AbstractApplicationEventMulticaster
 
 		Object source = event.getSource();
 		Class<?> sourceType = (source != null ? source.getClass() : null);
+//		构造了listenerCache的缓存
 		ListenerCacheKey cacheKey = new ListenerCacheKey(eventType, sourceType);
 
 		// Quick check for existing entry on ConcurrentHashMap...
+//		如果缓存存在快速返回
 		ListenerRetriever retriever = this.retrieverCache.get(cacheKey);
 		if (retriever != null) {
 			return retriever.getApplicationListeners();
@@ -186,6 +188,7 @@ public abstract class AbstractApplicationEventMulticaster
 				(ClassUtils.isCacheSafe(event.getClass(), this.beanClassLoader) &&
 						(sourceType == null || ClassUtils.isCacheSafe(sourceType, this.beanClassLoader)))) {
 			// Fully synchronized building and caching of a ListenerRetriever
+//			加锁可能以为是代码块中有写的一些操作，有并发问题
 			synchronized (this.retrievalMutex) {
 				retriever = this.retrieverCache.get(cacheKey);
 				if (retriever != null) {
@@ -234,6 +237,7 @@ public abstract class AbstractApplicationEventMulticaster
 			for (String listenerBeanName : listenerBeans) {
 				try {
 					Class<?> listenerType = beanFactory.getType(listenerBeanName);
+//					判断listenerType & eventType 是否支持事件
 					if (listenerType == null || supportsEvent(listenerType, eventType)) {
 						ApplicationListener<?> listener =
 								beanFactory.getBean(listenerBeanName, ApplicationListener.class);
