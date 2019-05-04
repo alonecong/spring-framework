@@ -28,7 +28,6 @@ difference that router functions provide not just data, but also behavior.
 `RouterFunctions.route()` provides a router builder that facilitates the creation of routers,
 as the following example shows:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -63,10 +62,9 @@ public class PersonHandler {
 	}
 }
 ----
-====
 
 One way to run a `RouterFunction` is to turn it into an `HttpHandler` and install it
-through one of the built-in <<web-reactive.adoc#webflux-httphandler,server adapters>>:
+through one of the built-in <<web-reactive.adoc#webflux-httphandler, server adapters>>:
 
 * `RouterFunctions.toHttpHandler(RouterFunction)`
 * `RouterFunctions.toHttpHandler(RouterFunction, HandlerStrategies)`
@@ -81,11 +79,11 @@ Most applications can run through the WebFlux Java configuration, see <<webflux-
 
 `ServerRequest` and `ServerResponse` are immutable interfaces that offer JDK 8-friendly
 access to the HTTP request and response.
-Both request and response provide http://www.reactive-streams.org[Reactive Streams] back pressure
+Both request and response provide https://www.reactive-streams.org[Reactive Streams] back pressure
 against the body streams.
 The request body is represented with a Reactor `Flux` or `Mono`.
 The response body is represented with any Reactive Streams `Publisher`, including `Flux` and `Mono`.
-For more on that, see <<web-reactive.adoc#webflux-reactive-libraries,Reactive Libraries>>.
+For more on that, see <<web-reactive.adoc#webflux-reactive-libraries, Reactive Libraries>>.
 
 
 
@@ -97,62 +95,50 @@ while access to the body is provided through the `body` methods.
 
 The following example extracts the request body to a `Mono<String>`:
 
-====
 [source,java]
 ----
 Mono<String> string = request.bodyToMono(String.class);
 ----
-====
 
 The following example extracts the body to a `Flux<Person>`, where `Person` objects are decoded from some
 serialized form, such as JSON or XML:
 
-====
 [source,java]
 ----
 Flux<Person> people = request.bodyToFlux(Person.class);
 ----
-====
 
 The preceding examples are shortcuts that use the more general `ServerRequest.body(BodyExtractor)`,
 which accepts the `BodyExtractor` functional strategy interface. The utility class
 `BodyExtractors` provides access to a number of instances. For example, the preceding examples can
 also be written as follows:
 
-====
 [source,java]
 ----
 Mono<String> string = request.body(BodyExtractors.toMono(String.class));
 Flux<Person> people = request.body(BodyExtractors.toFlux(Person.class));
 ----
-====
 
 The following example shows how to access form data:
 
-====
 [source,java]
 ----
 Mono<MultiValueMap<String, String> map = request.body(BodyExtractors.toFormData());
 ----
-====
 
 The following example shows how to access multipart data as a map:
 
-====
 [source,java]
 ----
 Mono<MultiValueMap<String, Part> map = request.body(BodyExtractors.toMultipartData());
 ----
-====
 
 The following example shows how to access multiparts, one at a time, in streaming fashion:
 
-====
 [source,java]
 ----
-Flux<Part> parts = request.body(BodyExtractos.toParts());
+Flux<Part> parts = request.body(BodyExtractors.toParts());
 ----
-====
 
 
 
@@ -164,23 +150,19 @@ a `build` method to create it. You can use the builder to set the response statu
 headers, or to provide a body. The following example creates a 200 (OK) response with JSON
 content:
 
-====
 [source,java]
 ----
 Mono<Person> person = ...
 ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(person, Person.class);
 ----
-====
 
 The following example shows how to build a 201 (CREATED) response with a `Location` header and no body:
 
-====
 [source,java]
 ----
 URI location = ...
 ServerResponse.created(location).build();
 ----
-====
 
 
 
@@ -189,14 +171,12 @@ ServerResponse.created(location).build();
 
 We can write a handler function as a lambda, as the following example shows:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
 HandlerFunction<ServerResponse> helloWorld =
   request -> ServerResponse.ok().body(fromObject("Hello World"));
 ----
-====
 
 That is convenient, but in an application we need multiple functions, and multiple inline
 lambda's can get messy.
@@ -204,7 +184,6 @@ Therefore, it is useful to group related handler functions together into a handl
 has a similar role as  `@Controller` in an annotation-based application.
 For example, the following class exposes a reactive `Person` repository:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -248,16 +227,15 @@ when the `Person` has been saved).
 <3> `getPerson` is a handler function that returns a single person, identified by the `id` path
 variable. We retrieve that `Person` from the repository and create a JSON response, if it is
 found. If it is not found, we use `switchIfEmpty(Mono<T>)` to return a 404 Not Found response.
-====
 
 
 
 [[webflux-fn-handler-validation]]
 === Validation
 
-A functional endpoint can use Spring's <<core.adoc#validation,validation facilities>> to
+A functional endpoint can use Spring's <<core.adoc#validation, validation facilities>> to
 apply validation to the request body. For example, given a custom Spring
-<<core.adoc#validation,Validator>> implementation for a `Person`:
+<<core.adoc#validation, Validator>> implementation for a `Person`:
 
 ====
 [source,java,indent=0]
@@ -290,7 +268,7 @@ public class PersonHandler {
 
 Handlers can also use the standard bean validation API (JSR-303) by creating and injecting
 a global `Validator` instance based on `LocalValidatorFactoryBean`.
-See <<core.adoc#validation-beanvalidation,Spring Validation>>.
+See <<core.adoc#validation-beanvalidation, Spring Validation>>.
 
 
 
@@ -324,7 +302,6 @@ and so on.
 The following example uses a request predicate to create a constraint based on the `Accept`
 header:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -332,7 +309,6 @@ RouterFunction<ServerResponse> route = RouterFunctions.route()
 	.GET("/hello-world", accept(MediaType.TEXT_PLAIN),
 		request -> Response.ok().body(fromObject("Hello World")));
 ----
-====
 
 You can compose multiple request predicates together by using:
 
@@ -368,7 +344,6 @@ There are also other ways to compose multiple router functions together:
 The following example shows the composition of four routes:
 
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -395,7 +370,6 @@ RouterFunction<ServerResponse> route = route()
 `PersonHandler.createPerson`, and
 <4> `otherRoute` is a router function that is created elsewhere, and added to the route built.
 
-====
 
 
 === Nested Routes
@@ -409,7 +383,6 @@ When using annotations, you would remove this duplication by using a type-level 
 In WebFlux.fn, path predicates can be shared through the `path` method on the router function builder.
 For instance, the last few lines of the example above can be improved in the following way by using nested routes:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -420,7 +393,6 @@ RouterFunction<ServerResponse> route = route()
 		.POST("/person", handler::createPerson))
 	.build();
 ----
-====
 
 Note that second parameter of `path` is a consumer that takes the a router builder.
 
@@ -429,7 +401,6 @@ the `nest` method on the builder.
 The above still contains some duplication in the form of the shared `Accept`-header predicate.
 We can further improve by using the `nest` method together with `accept`:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -441,7 +412,6 @@ RouterFunction<ServerResponse> route = route()
 		.POST("/person", handler::createPerson))
 	.build();
 ----
-====
 
 
 [[webflux-fn-running]]
@@ -454,10 +424,10 @@ function to an `HttpHandler` by using one of the following:
 * `RouterFunctions.toHttpHandler(RouterFunction, HandlerStrategies)`
 
 You can then use the returned `HttpHandler` with a number of server adapters by following
-<<web-reactive.adoc#webflux-httphandler,HttpHandler>> for server-specific instructions.
+<<web-reactive.adoc#webflux-httphandler, HttpHandler>> for server-specific instructions.
 
 A more typical option, also used by Spring Boot, is to run with a
-<<web-reactive.adoc#webflux-dispatcher-handler,`DispatcherHandler`>>-based setup through the
+<<web-reactive.adoc#webflux-dispatcher-handler, `DispatcherHandler`>>-based setup through the
 <<web-reactive.adoc#webflux-config>>, which uses Spring configuration to declare the
 components required to process requests. The WebFlux Java configuration declares the following
 infrastructure components to support functional endpoints:
@@ -476,9 +446,8 @@ any are declared. It is also how functional endpoints are enabled by the Spring 
 starter.
 
 The following example shows a WebFlux Java configuration (see
-<<web-reactive.adoc#webflux-dispatcher-handler,DispatcherHandler>> for how to run it):
+<<web-reactive.adoc#webflux-dispatcher-handler, DispatcherHandler>> for how to run it):
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -514,7 +483,6 @@ public class WebConfig implements WebFluxConfigurer {
 	}
 }
 ----
-====
 
 
 
@@ -529,7 +497,6 @@ The filter will apply to all routes that are built by the builder.
 This means that filters defined in nested routes do not apply to "top-level" routes.
 For instance, consider the following example:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -547,7 +514,7 @@ RouterFunction<ServerResponse> route = route()
 ----
 <1> The `before` filter that adds a custom request header is only applied to the two GET routes.
 <2> The `after` filter that logs the response is applied to all routes, including the nested ones.
-====
+
 
 The `filter` method on the router builder takes a `HandlerFilterFunction`: a
 function that takes a `ServerRequest` and `HandlerFunction` and returns a `ServerResponse`.
@@ -559,7 +526,6 @@ Now we can add a simple security filter to our route, assuming that we have a `S
 can determine whether a particular path is allowed.
 The following example shows how to do so:
 
-====
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -582,7 +548,6 @@ RouterFunction<ServerResponse> route = route()
 	})
 	.build();
 ----
-====
 
 The preceding example demonstrates that invoking the `next.handle(ServerRequest)` is optional.
 We allow only the handler function to be executed when access is allowed.
@@ -590,4 +555,5 @@ We allow only the handler function to be executed when access is allowed.
 Besides using the `filter` method on the router function builder, it is possible to apply a
 filter to an existing router function via `RouterFunction.filter(HandlerFilterFunction)`.
 
-NOTE: CORS support for functional endpoints is provided through a dedicated <<webflux-cors-webfilter,`CorsWebFilter`>>.
+NOTE: CORS support for functional endpoints is provided through a dedicated
+<<webflux-cors-webfilter, `CorsWebFilter`>>.

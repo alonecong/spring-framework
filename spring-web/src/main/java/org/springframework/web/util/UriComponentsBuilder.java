@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -294,7 +294,7 @@ public class UriComponentsBuilder implements UriBuilder, Cloneable {
 	/**
 	 * Create a new {@code UriComponents} object from the URI associated with
 	 * the given HttpRequest while also overlaying with values from the headers
-	 * "Forwarded" (<a href="http://tools.ietf.org/html/rfc7239">RFC 7239</a>),
+	 * "Forwarded" (<a href="https://tools.ietf.org/html/rfc7239">RFC 7239</a>),
 	 * or "X-Forwarded-Host", "X-Forwarded-Port", and "X-Forwarded-Proto" if
 	 * "Forwarded" is not found.
 	 * @param request the source request
@@ -441,7 +441,15 @@ public class UriComponentsBuilder implements UriBuilder, Cloneable {
 	}
 
 	/**
-	 * Build a URI String. This is a shortcut for:
+	 * Build a URI String.
+	 * <p>Effectively, a shortcut for building, encoding, and returning the
+	 * String representation:
+	 * <pre class="code">
+	 * String uri = builder.build().encode().toUriString()
+	 * </pre>
+	 * <p>However if {@link #uriVariables(Map) URI variables} have been provided
+	 * then the URI template is pre-encoded separately from URI variables (see
+	 * {@link #encode()} for details), i.e. equivalent to:
 	 * <pre>
 	 * String uri = builder.encode().build().toUriString()
 	 * </pre>
@@ -449,7 +457,9 @@ public class UriComponentsBuilder implements UriBuilder, Cloneable {
 	 * @see UriComponents#toUriString()
 	 */
 	public String toUriString() {
-		return buildInternal(EncodingHint.ENCODE_TEMPLATE).toUriString();
+		return this.uriVariables.isEmpty() ?
+				build().encode().toUriString() :
+				buildInternal(EncodingHint.ENCODE_TEMPLATE).toUriString();
 	}
 
 
@@ -789,7 +799,7 @@ public class UriComponentsBuilder implements UriBuilder, Cloneable {
 
 	/**
 	 * Adapt this builder's scheme+host+port from the given headers, specifically
-	 * "Forwarded" (<a href="http://tools.ietf.org/html/rfc7239">RFC 7239</a>,
+	 * "Forwarded" (<a href="https://tools.ietf.org/html/rfc7239">RFC 7239</a>,
 	 * or "X-Forwarded-Host", "X-Forwarded-Port", and "X-Forwarded-Proto" if
 	 * "Forwarded" is not found.
 	 * <p><strong>Note:</strong> this method uses values from forwarded headers,
