@@ -525,9 +525,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				/**
+				 * 完成了类的扫描 和默认加入spring 内置的6个类做处理
+				 *
+				 * "org.springframework.context.annotation.internalConfigurationAnnotationProcessor"
+				 * "org.springframework.context.event.internalEventListenerFactory"
+				 * "org.springframework.context.event.internalEventListenerProcessor"
+				 * "org.springframework.context.annotation.internalAutowiredAnnotationProcessor"
+				 * "org.springframework.context.annotation.internalCommonAnnotationProcessor"
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				//注册bean 和拦截 bean的初始化工作
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.

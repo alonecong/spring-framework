@@ -83,7 +83,21 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * e.g. {@link Configuration @Configuration} classes
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... annotatedClasses) {
+		/**
+		 * 这个this调用了无参数的构造方法和父类的无参构造
+		 * this.reader = new AnnotatedBeanDefinitionReader(this);
+		 * todo 这个后续需要了解下 如何扫描？
+		 * this.scanner = new ClassPathBeanDefinitionScanner(this);
+		 * 父亲初始化
+		 * this.beanFactory = new DefaultListableBeanFactory();
+		 * 这个也是为了把当前的类加入到spring 上下文中，因为这个类是入口类，
+		 * 这个类上可能有@ComponentScan 的注解，spring 获取到注解的包名进行扫描把这些类定义加入到map中，
+		 * 之后完成初始化的操作
+		 */
+
 		this();
+		//绕了一大圈 this.beanDefinitionMap.put(beanName, beanDefinition); 就是先把这个传入的了类定义
+//		//放入了beanDefinitionMap中
 		register(annotatedClasses);
 		refresh();
 	}
